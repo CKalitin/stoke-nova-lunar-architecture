@@ -147,7 +147,7 @@ Thrust Structure: 17,051 kg * 0.16 = 2,728 kg
 Other: 17,051 kg - 8,520 kg - 3,171 kg - 2,728 kg = 2,632 kg
 Total: 17,051 kg
 
-S1 Dry Mass: 17,051 kg
+S1 Dry Mass: 17,050 kg
 S2 Dry Mass: 8,045 kg
 
 S1/Total Dry Mass Ratio: 17,051 kg / (17,051 kg + 8,045 kg) = 0.68

@@ -21,6 +21,7 @@ Thrust (Sea level): 3,110 kN (317,000 kg)
 Thrust (SVL, per engine): 444.3 kN (45,300 kg)
 
 TWR (Sea level): 1.40
+O:F Ratio: 3.5:1
 
 ### Stage 2:
 (including payload fairing)  
@@ -32,6 +33,9 @@ LH2 Mass: 2,750 kg (6,060 lb)
 Net Mass: 18,000 kg (39,660 lb)
 
 Thrust (Vacuum): 111 kN (11300 kg)
+
+TWR (Vacuum): 0.62
+O:F Ratio: 5.55:1
 
 # EmlynSpace pixel counting Stats:
 https://x.com/EmlynSpace/status/1864048440759435767
