@@ -154,3 +154,11 @@ S1/Total Dry Mass Ratio: 17,051 kg / (17,051 kg + 8,045 kg) = 0.68
 S2/Total Dry Mass Ratio: 8,045 kg / (17,051 kg + 8,045 kg) = 0.32
 
 Now, to simulate and back fit the data to try to come to the real payload mass conclusions.
+
+Starship Dry Mass:
+https://en.wikipedia.org/wiki/SpaceX_Starship
+Ship V1: 100t?
+Booster V1: 275t?
+
+Ship V1 Dry Mass Ratio = 100t / (100t + 275t) = 0.27
+Booster V1 Dry Mass Ratio = 275t / (100t + 275t) = 0.73

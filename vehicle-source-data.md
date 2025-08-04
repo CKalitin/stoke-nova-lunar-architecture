@@ -9,13 +9,24 @@ Net Fuel Mass: 43,550 kg
 Net Propellant Mass: 201,700 kg
 Dry Mass: 25,096 kg
 
+S1:S2 Dry Mass Ratio: 17,051 kg / 8,045 kg = 2.12
+S1 Dry Mass Ratio = 17,051 kg / 25,096 kg = 0.68
+S2 Dry Mass Ratio = 8,045 kg / 25,096 kg = 0.32
+
+Starship reference:
+S1: 0.73
+S2: 0.27
+
 ### Stage 1:
 Height: 27.1 m (89 ft)  
 Diameter: 3.7 m (12 ft)  
 
 LOX Mass: 142,900 kg (315,000 lb)  
 LNG Mass: 40,800 kg (90,000 lb)  
-Net Mass: 183,700 kg (405,000 lb)
+Net Propellant Mass: 183,700 kg (405,000 lb)
+
+Dry Mass Estimate: 17,051 kg
+Net Mass: 200,751 kg
 
 Thrust (Sea level): 3,110 kN (317,000 kg)
 Thrust (SVL, per engine): 444.3 kN (45,300 kg)
@@ -30,11 +41,14 @@ Diameter: 4.3 m (14 ft)
 
 LOX Mass: 15,250 kg (33,600 lb)  
 LH2 Mass: 2,750 kg (6,060 lb)  
-Net Mass: 18,000 kg (39,660 lb)
+Net Propellant Mass: 18,000 kg (39,660 lb)
+
+Dry Mass Estimate: 8,045 kg
+Net Mass: 26,045 kg
 
 Thrust (Vacuum): 111 kN (11300 kg)
 
-TWR (Vacuum): 0.62
+TWR (Vacuum): 0.44
 O:F Ratio: 5.55:1
 
 # EmlynSpace pixel counting Stats:

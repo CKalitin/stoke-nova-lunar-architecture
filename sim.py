@@ -20,12 +20,16 @@ class Stage:
         self.fuel_ratio = self.fuel_mass / (self.fuel_mass + self.lox_mass) if (self.fuel_mass + self.lox_mass) > 0 else 0.0
         self.lox_ratio = self.lox_mass / (self.fuel_mass + self.lox_mass) if (self.fuel_mass + self.lox_mass) > 0 else 0.0
     
-    # return wet mass as sum of dry, propellant, and payload masses
     def wet_mass(self) -> float:
-        return self.dry_mass + self.fuel_mass + self.lox_mass + self.payload_mass()
+        # return wet mass as sum of dry, propellant, and payload masses
+        return self.dry_mass + self.propellant_mass() + self.payload_mass()
     
-    # Payload + Dry + residuals mass for calculating mass at end of a burn
+    def propellant_mass(self) -> float:
+        # Total propellant mass (fuel + oxidizer)
+        return self.fuel_mass + self.lox_mass
+    
     def terminal_mass(self) -> float:
+        # Payload + Dry + residuals mass for calculating mass at end of a burn
         if type(self.payload) is Stage:
             return self.payload.wet_mass() + self.dry_mass + (self.wet_mass() * self.residuals)
         return self.payload + self.dry_mass + (self.wet_mass() * self.residuals)
@@ -62,11 +66,16 @@ first_stage = Stage(
         payload=second_stage
     )
 
-def get_stage_dv(stage):
+def get_stage_dv(stage, final_mass=None):
+    # Return full burn delta-v (inclusive of residuals), or the dV for burning a specific amount of propellant
     exhaust_velocity = stage.isp_avg * G # m/s
-    return exhaust_velocity * math.log(stage.wet_mass() / stage.terminal_mass())
+    if final_mass is None:
+        return exhaust_velocity * math.log(stage.wet_mass() / stage.terminal_mass())
+    if final_mass <= stage.terminal_mass():
+        print(f"Warning: Final mass exceeds terminal mass of stage.\n{final_mass} <= {stage.terminal_mass()}.\n{stage}")
+    return exhaust_velocity * math.log(stage.wet_mass() / final_mass)
 
-def get_landing_propellant_mass(stage, initial_velocity=400, throttle=1/7*0.9):
+def get_landing_propellant_mass(stage, initial_velocity=400, throttle=1/7*0.9, verbose=False):
     # With time going backwards from landing, calculate acceleration for every time step
     # This simulates the rocket ascending and gaining propellant as it does
     # I failed at solving the integral
@@ -75,19 +84,33 @@ def get_landing_propellant_mass(stage, initial_velocity=400, throttle=1/7*0.9):
     time = 0
     time_step = 0.1 # seconds
     mass = stage.terminal_mass() - stage.payload_mass() # This is inclusive of residuals
-    while vel < initial_velocity and time_step < 1000:
+    while vel < initial_velocity and time < 1000:
         acceleration = stage.thrust * throttle / mass - G
         vel += acceleration * time_step
         mass += stage.mass_flow_rate() * throttle * time_step
         time += time_step
-        print(f"Time: {time:.2f}s, Velocity: {vel:.2f} m/s, Mass: {mass:.2f} kg, Acceleration: {acceleration} m/s²")
+        if verbose:
+            print(f"Time: {time:.1f}s, Velocity: {vel:.1f} m/s, Mass: {mass:.1f} kg, Acceleration: {acceleration:.2f} m/s²")
     return stage.mass_flow_rate() * throttle * time
 
-stage_1_dv = get_stage_dv(first_stage)
-stage_2_dv = get_stage_dv(second_stage)
+s1_dv = get_stage_dv(first_stage)
+s2_dv = get_stage_dv(second_stage)
 
-print(get_landing_propellant_mass(first_stage))
+s1_landing_propellant_mass = get_landing_propellant_mass(first_stage, initial_velocity=400, throttle=1/7*0.9)
+s2_landing_propellant_mass = get_landing_propellant_mass(second_stage, initial_velocity=150, throttle=1, verbose=True)
 
-print("Stage 1 delta-v:", stage_1_dv, "m/s")
-print("Stage 2 delta-v:", stage_2_dv, "m/s")
-print("Total delta-v:", stage_1_dv + stage_2_dv, "m/s")
+stage_1_dv_with_landing = get_stage_dv(first_stage, first_stage.dry_mass + first_stage.payload_mass() + s1_landing_propellant_mass)
+stage_2_dv_with_deorbit_and_landing = get_stage_dv(second_stage, second_stage.dry_mass + second_stage.payload_mass() + s2_landing_propellant_mass)
+
+print("")
+print("Stage 1 delta-v:", s1_dv, "m/s")
+print("Stage 1 delta-v with landing propellant:", stage_1_dv_with_landing, "m/s")
+print("Stage 1 landing propellant mass:", s1_landing_propellant_mass, "kg")
+print("")
+print("Stage 2 delta-v:", s2_dv, "m/s")
+print("Stage 2 delta-v with deorbit and landing propellant:", stage_2_dv_with_deorbit_and_landing, "m/s")
+print("Stage 2 landing propellant mass:", s2_landing_propellant_mass, "kg")
+print("")
+print("Expendable delta-v:", s1_dv + s2_dv, "m/s")
+print("Partially reusable delta-v:", stage_1_dv_with_landing + s2_dv, "m/s")
+print("Fully reusable delta-v:", stage_1_dv_with_landing + stage_2_dv_with_deorbit_and_landing, "m/s")
