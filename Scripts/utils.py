@@ -1,6 +1,6 @@
 from __future__ import annotations # For float | 'Stage' type hint
-import math
 from dataclasses import dataclass
+import math
 
 G = 9.80665 # Acceleration due to gravity in m/s^2
 
@@ -52,30 +52,14 @@ class Stage:
         # Calculate exhaust velocity in m/s
         return self.isp_avg * G
 
-second_stage = Stage(
-    dry_mass=8045,  # kg
-    lox_mass=15250,  # kg
-    fuel_mass=2750,  # kg
-    thrust=111000,  # N
-    isp_avg=440,  # s
-    payload=3000  # kg
-)
-
-first_stage = Stage(
-        dry_mass=17050,  # kg
-        fuel_mass=40800,  # kg
-        lox_mass=142900,  # kg
-        thrust=3110000,  # N
-        isp_avg=340,  # s
-        payload=second_stage
-    )
-
 def get_stage_dv(stage, final_mass=None):
-    # Return full burn delta-v (inclusive of residuals), or the dV for burning a specific amount of propellant
+    # Return full burn delta-v (inclusive of residuals), or if final_mass is specified, delta-v for burning to that mass
+    
     if final_mass is None:
         return stage.exhaust_velocity() * math.log(stage.wet_mass() / stage.terminal_mass())
-    if final_mass <= stage.terminal_mass():
-        print(f"Warning: Final mass exceeds terminal mass of stage.\n{final_mass} <= {stage.terminal_mass()}.\n{stage}")
+    
+    if final_mass < stage.terminal_mass():
+        print(f"Warning: Final mass exceeds terminal mass of stage.\n{final_mass} < {stage.terminal_mass()}.\n{stage}")
     return stage.exhaust_velocity() * math.log(stage.wet_mass() / final_mass)
 
 def get_landing_propellant_mass(stage, initial_velocity=400, throttle=1/7*0.9, verbose=False):
@@ -114,26 +98,26 @@ def get_propellant_mass_for_dv(stage, delta_v, initial_mass=None, final_mass=Non
         return initial_mass - final_mass
     print("Error: Must specify either initial_mass or final_mass")
 
-s1_dv = get_stage_dv(first_stage)
-s2_dv = get_stage_dv(second_stage)
+# Simulate ascent of a two-stage rocket for a given reuse fraction (slightly wrong terminology), returning the total delta-v achieved
+def get_stack_dv(s1: Stage, s2: Stage, reuse_fraction:str = "expendable", s1_terminal_vel: float = 400, s2_terminal_vel: float = 100, s2_deorbit_vel: float = 100, verbose: bool = False) -> float:
+    s1_landing_prop = 0
+    s2_landing_prop = 0
+    s2_deorbit_prop = get_propellant_mass_for_dv(s2, delta_v=s2_deorbit_vel, final_mass=s2.terminal_mass() + s2_landing_prop) # Always deorbit, even if expendable
 
-s1_landing_propellant_mass = get_landing_propellant_mass(first_stage, initial_velocity=400, throttle=1/7*0.9)
-s2_landing_propellant_mass = get_landing_propellant_mass(second_stage, initial_velocity=100, throttle=1)
-s2_deorbit_propellant_mass = get_propellant_mass_for_dv(second_stage, delta_v=100, final_mass=second_stage.terminal_mass() + s2_landing_propellant_mass) # Include landing propellant
+    if reuse_fraction == "partially_reusable":
+        s1_landing_prop = get_landing_propellant_mass(s1, initial_velocity=s1_terminal_vel, throttle=1/7*0.9)
+    elif reuse_fraction == "fully_reusable":
+        s1_landing_prop = get_landing_propellant_mass(s1, initial_velocity=s1_terminal_vel, throttle=1/7*0.9)
+        s2_landing_prop = get_landing_propellant_mass(s2, initial_velocity=s2_terminal_vel, throttle=0.9)
 
-stage_1_dv_with_landing = get_stage_dv(first_stage, final_mass=first_stage.terminal_mass() + s1_landing_propellant_mass)
-stage_2_dv_with_deorbit_and_landing = get_stage_dv(second_stage, final_mass=second_stage.terminal_mass() + s2_landing_propellant_mass + s2_deorbit_propellant_mass)
+    s1_dv = get_stage_dv(s1, final_mass=s1.terminal_mass() + s1_landing_prop)
+    s2_dv = get_stage_dv(s2, final_mass=s2.terminal_mass() + s2_landing_prop + s2_deorbit_prop)
 
-print("")
-print("Stage 1 delta-v:", s1_dv, "m/s")
-print("Stage 1 delta-v with landing propellant:", stage_1_dv_with_landing, "m/s")
-print("Stage 1 landing propellant mass:", s1_landing_propellant_mass, "kg")
-print("")
-print("Stage 2 delta-v:", s2_dv, "m/s")
-print("Stage 2 delta-v with deorbit and landing propellant:", stage_2_dv_with_deorbit_and_landing, "m/s")
-print("Stage 2 landing propellant mass:", s2_landing_propellant_mass, "kg")
-print("Stage 2 deorbit propellant mass:", s2_deorbit_propellant_mass, "kg")
-print("")
-print("Expendable delta-v:", s1_dv + s2_dv, "m/s")
-print("Partially reusable delta-v:", stage_1_dv_with_landing + s2_dv, "m/s")
-print("Fully reusable delta-v:", stage_1_dv_with_landing + stage_2_dv_with_deorbit_and_landing, "m/s")
+    if verbose:
+        print(f"Stage 1 delta-v: {s1_dv:.2f} m/s, landing propellant: {s1_landing_prop:.2f} kg")
+        print(f"Stage 2 delta-v: {s2_dv:.2f} m/s, landing propellant: {s2_landing_prop:.2f} kg, deorbit propellant: {s2_deorbit_prop:.2f} kg")
+
+    return s1_dv + s2_dv
+
+def get_stack_payload_capacity_by_reuse_fraction():
+    pass
