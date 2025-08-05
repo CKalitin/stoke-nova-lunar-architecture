@@ -99,7 +99,7 @@ def get_propellant_mass_for_dv(stage, delta_v, initial_mass=None, final_mass=Non
     print("Error: Must specify either initial_mass or final_mass")
 
 # Simulate ascent of a two-stage rocket for a given reuse fraction (slightly wrong terminology), returning the total delta-v achieved
-def get_stack_dv(s1: Stage, s2: Stage, reuse_fraction:str = "expendable", s1_terminal_vel: float = 400, s2_terminal_vel: float = 100, s2_deorbit_vel: float = 100, verbose: bool = False) -> float:
+def get_stack_dv(s1: Stage, s2: Stage, reuse_fraction:str = "expendable", s1_terminal_vel: float = 400, s2_terminal_vel: float = 150, s2_deorbit_vel: float = 100, verbose: bool = False) -> float:
     s1_landing_prop = 0
     s2_landing_prop = 0
     s2_deorbit_prop = get_propellant_mass_for_dv(s2, delta_v=s2_deorbit_vel, final_mass=s2.terminal_mass() + s2_landing_prop) # Always deorbit, even if expendable
@@ -117,7 +117,7 @@ def get_stack_dv(s1: Stage, s2: Stage, reuse_fraction:str = "expendable", s1_ter
         print(f"Stage 1 delta-v: {s1_dv:.2f} m/s, landing propellant: {s1_landing_prop:.2f} kg")
         print(f"Stage 2 delta-v: {s2_dv:.2f} m/s, landing propellant: {s2_landing_prop:.2f} kg, deorbit propellant: {s2_deorbit_prop:.2f} kg")
 
-    return s1_dv + s2_dv
+    return s1_dv + s2_dv, s1_dv, s2_dv
 
 def get_stack_payload_capacity_by_reuse_fraction():
     pass

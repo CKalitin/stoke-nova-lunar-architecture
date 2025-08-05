@@ -67,3 +67,21 @@ print(f"Vacuum thrust: {thrust_vac:.0f} N")
 print(f"Vacuum ISP: {isp_vac:.1f} s")
 
 # This is retarded, start over
+
+# RD-180:
+# Sea level ISP: 311 s
+# Vacuum ISP: 338 s
+# delta: 27 s
+
+# F-1:
+# Sea level ISP: 263 s
+# Vacuum ISP: 304 s
+# delta: 41 s
+
+# Wow the F-1 has a terrible ISP for a kerolox engine, well it is open cycle big
+
+# I'll a 40s ISP increase, given its methalox and staged combustion
+# Vac ISP = 367 s
+
+# A reasonable average ISP is directly in the middle of sea level and vacuum values
+# 347 s

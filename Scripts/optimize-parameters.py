@@ -14,7 +14,7 @@ first_stage = utils.Stage(
     fuel_mass=40800,  # kg
     lox_mass=142900,  # kg
     thrust=3110000,  # N
-    isp_avg=355,  # s
+    isp_avg=347,  # s
     payload=second_stage
 )
 
@@ -31,6 +31,8 @@ def optimize_stage_dry_masses(target_payload_mass, s1, s2, reuse_fraction="expen
     low = s1.dry_mass - search_range # kg
     
     stack_dv = 0 # m/s
+    s1_dv = 0 # m/s
+    s2_dv = 0 # m/s
     
     initial_s1_dry_mass = s1.dry_mass
     initial_s2_dry_mass = s2.dry_mass
@@ -43,10 +45,10 @@ def optimize_stage_dry_masses(target_payload_mass, s1, s2, reuse_fraction="expen
         s1.dry_mass = mid
         s2.dry_mass = initial_s2_dry_mass + (initial_s1_dry_mass - s1.dry_mass)
 
-        stack_dv = utils.get_stack_dv(s1, s2, reuse_fraction, verbose=verbose)
+        stack_dv, s1_dv, s2_dv = utils.get_stack_dv(s1, s2, reuse_fraction, verbose=verbose)
 
         if verbose:
-            print(f"Iteration {iterations}: s1 dry mass: {s1.dry_mass} kg, s2 dry mass: {s2.dry_mass} kg, stack delta-v: {stack_dv} m/s")
+            print(f"Iteration {iterations}: s1 dry mass: {s1.dry_mass:.2f} kg, s2 dry mass: {s2.dry_mass:.2f} kg, stack delta-v: {stack_dv:.2f} m/s, s1 dV: {s1_dv:.2f} m/s, s2 dV: {s2_dv:.2f} m/s")
 
         if stack_dv < target_dv:
             low = mid
@@ -56,7 +58,7 @@ def optimize_stage_dry_masses(target_payload_mass, s1, s2, reuse_fraction="expen
         iterations += 1
 
     if print_result:
-        print(f"Final iteration {iterations}: s1 dry mass: {s1.dry_mass} kg, s2 dry mass: {s2.dry_mass} kg, stack delta-v: {stack_dv} m/s")
+        print(f"Final iteration {iterations}: s1 dry mass: {s1.dry_mass:.2f} kg, s2 dry mass: {s2.dry_mass:.2f} kg, stack delta-v: {stack_dv:.2f} m/s, s1 dV: {s1_dv:.2f} m/s, s2 dV: {s2_dv:.2f} m/s ({reuse_fraction})")
 
     return s1.dry_mass, s2.dry_mass, stack_dv, iterations
 
@@ -71,7 +73,7 @@ def get_stack_payload_capacity_to_dv(s1, s2, target_dv=9000, allowance_payload_v
         mid = (high + low) / 2
         s2.payload = mid
         
-        stack_dv = utils.get_stack_dv(s1, s2, reuse_fraction, verbose=verbose)
+        stack_dv, s1_dv, s2_dv = utils.get_stack_dv(s1, s2, reuse_fraction, verbose=verbose)
         
         if verbose:
             print(f"Iteration {iterations}: Testing payload {mid} kg, stack delta-v: {stack_dv:.2f} m/s")
