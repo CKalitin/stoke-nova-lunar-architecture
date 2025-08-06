@@ -113,4 +113,3 @@ optimize_stage_dry_masses(target_payload_mass=3000, s1=first_stage, s2=second_st
 print("Full Reuse optimized: ", end="")
 print_stack_payload_capacity_vs_reuse_fraction(first_stage, second_stage)
 print("")
-
