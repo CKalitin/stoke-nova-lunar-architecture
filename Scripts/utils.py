@@ -79,8 +79,7 @@ def get_landing_propellant_mass(stage, initial_velocity=400, throttle=1/7*0.9, v
         mass += stage.mass_flow_rate() * throttle * time_step
         time += time_step
         if verbose:
-            pass
-        print(f"Time: {time:.1f}s, Velocity: {vel:.1f} m/s, Mass: {mass:.1f} kg, Acceleration: {acceleration:.2f} m/s²")
+            print(f"Time: {time:.1f}s, Velocity: {vel:.1f} m/s, Mass: {mass:.1f} kg, Acceleration: {acceleration:.2f} m/s²")
     return stage.mass_flow_rate() * throttle * time
 
 def get_propellant_mass_for_dv(stage, delta_v, initial_mass=None, final_mass=None):
