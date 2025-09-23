@@ -1,16 +1,16 @@
 import utils
 
 second_stage = utils.Stage(
-    dry_mass=8045,  # kg
+    dry_mass=5543,  # kg
     lox_mass=15250,  # kg
     fuel_mass=2750,  # kg
     thrust=111000,  # N
     isp_avg=440,  # s
-    payload=3000  # kg
+    payload=5000  # kg
 )
 
 first_stage = utils.Stage(
-    dry_mass=17050,  # kg
+    dry_mass=14553,  # kg
     fuel_mass=40800,  # kg
     lox_mass=142900,  # kg
     thrust=3110000,  # N

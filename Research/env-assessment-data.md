@@ -7,11 +7,8 @@ Gross liftoff weight: 226,796 kg (500,000 lb)
 Net LOX Mass: 158,150 kg
 Net Fuel Mass: 43,550 kg
 Net Propellant Mass: 201,700 kg
-Dry Mass: 25,096 kg
-
-S1:S2 Dry Mass Ratio: 17,051 kg / 8,045 kg = 2.12
-S1 Dry Mass Ratio = 17,051 kg / 25,096 kg = 0.68
-S2 Dry Mass Ratio = 8,045 kg / 25,096 kg = 0.32
+Net Payload Mass: 5,000 kg (max of 1,250 kg to 5,000 kg range)
+Dry Mass: 20,096 kg
 
 Starship reference:
 S1: 0.73
