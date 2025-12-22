@@ -1,5 +1,8 @@
 import utils
 
+# 420 s ISP vacuum
+# https://youtu.be/7OxNZ-N_3vE?si=lAtQb_X9oyoZFSKu&t=3903
+
 second_stage = utils.Stage(
     dry_mass = 7577, # dry_mass=5543,  # kg
     lox_mass=15250,  # kg
